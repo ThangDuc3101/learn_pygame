@@ -13,15 +13,16 @@ GREEN = (0,200,0)
 BLUE = (0,0,200)
 RED = (200,0,0)
 BLACK = (0,0,0)
+YELLOW = (200,200,0)
 
 # Tham so cua ong
 TUBE_WIDTH = 50
 TUBE_VELOCITY = 3
 TUBE_GAP = 150
 
-tube1_x = 0
-tube2_x = 200
-tube3_x = 400
+tube1_x = 400
+tube2_x = 600
+tube3_x = 800
 
 tube1_height = randint(100,400)
 tube2_height = randint(100,400)
@@ -44,6 +45,8 @@ tube1_pass = False
 tube2_pass = False
 tube3_pass = False
 
+pausing = False
+
 # Khoi tao dong ho
 clock = pygame.time.Clock()
 
@@ -52,9 +55,9 @@ while running:
     screen.fill(GREEN)
     
     # Ve ong
-    pygame.draw.rect(screen, BLUE, (tube1_x,0,TUBE_WIDTH,tube1_height))
-    pygame.draw.rect(screen, BLUE, (tube2_x,0,TUBE_WIDTH,tube2_height))
-    pygame.draw.rect(screen, BLUE, (tube3_x,0,TUBE_WIDTH,tube3_height))
+    tube1_rect = pygame.draw.rect(screen, BLUE, (tube1_x,0,TUBE_WIDTH,tube1_height))
+    tube2_rect = pygame.draw.rect(screen, BLUE, (tube2_x,0,TUBE_WIDTH,tube2_height))
+    tube3_rect = pygame.draw.rect(screen, BLUE, (tube3_x,0,TUBE_WIDTH,tube3_height))
     
     # Di chuyen ong sang trai
     tube1_x = tube1_x - TUBE_VELOCITY
@@ -62,16 +65,19 @@ while running:
     tube3_x = tube3_x - TUBE_VELOCITY
     
     # Ve ong doi dien
-    pygame.draw.rect(screen, BLUE, (tube1_x,tube1_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube1_height-TUBE_GAP))
-    pygame.draw.rect(screen, BLUE, (tube2_x,tube2_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube2_height-TUBE_GAP))
-    pygame.draw.rect(screen, BLUE, (tube3_x,tube3_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube3_height-TUBE_GAP))
+    tube1_rect_inv = pygame.draw.rect(screen, BLUE, (tube1_x,tube1_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube1_height-TUBE_GAP))
+    tube2_rect_inv = pygame.draw.rect(screen, BLUE, (tube2_x,tube2_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube2_height-TUBE_GAP))
+    tube3_rect_inv = pygame.draw.rect(screen, BLUE, (tube3_x,tube3_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube3_height-TUBE_GAP))
     
     # Ve chu
     score_txt = font.render("Score: "+str(score),True,BLACK)
     screen.blit(score_txt,(5,5))
     
     # Ve chim
-    pygame.draw.rect(screen, RED, (BIRD_X,bird_y,BIRD_WIDTH,BIRD_HEIGHT))
+    bird_rect = pygame.draw.rect(screen, RED, (BIRD_X,bird_y,BIRD_WIDTH,BIRD_HEIGHT))
+    
+    # Ve cat
+    sand_rect = pygame.draw.rect(screen, YELLOW, (0,580,400,20))
     
     # Tao ong moi
     if tube1_x < -TUBE_WIDTH:
@@ -101,14 +107,41 @@ while running:
     if tube3_x + TUBE_WIDTH <= BIRD_X and tube3_pass == False:
         score += 1
         tube3_pass = True    
+    
+    # Kiem tra va cham
+    for tube in [tube1_rect,tube2_rect,tube3_rect,tube1_rect_inv,tube2_rect_inv,tube3_rect_inv,sand_rect]:
+        if bird_rect.colliderect(tube):
+            TUBE_VELOCITY = 0
+            drop_velocity = 0
+            pausing = True
+            
+            game_over_msg = font.render("Game over",True,BLACK)            
+            your_score_msg = font.render("Your score:"+str(score),True,BLACK)
+            continue_msg = font.render("Press SPACE to continue",True,BLACK)
+            
+            screen.blit(game_over_msg,(150,300))
+            screen.blit(your_score_msg,(150,350))
+            screen.blit(continue_msg,(150,400))
             
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
             
         if event.type == pygame.KEYDOWN:            
-            # Nhan nut SPACE => di chuyen chim đi len
             if event.key == pygame.K_SPACE:
+                 # Nhan nut SPACE => reset
+                if pausing:
+                    drop_velocity=0
+                    TUBE_VELOCITY=3
+                    BIRD_X = 50
+                    bird_y = 400
+                    tube1_x = 400
+                    tube2_x = 600
+                    tube3_x = 800
+                    score = 0
+                    pausing = False
+                
+            # Nhan nut SPACE => di chuyen chim đi len
                 drop_velocity = 0
                 drop_velocity -= 10
     pygame.display.flip()   
