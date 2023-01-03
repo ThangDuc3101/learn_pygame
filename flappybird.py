@@ -10,6 +10,7 @@ running = True
 
 GREEN = (0,200,0)
 BLUE = (0,0,200)
+RED = (200,0,0)
 
 TUBE_WIDTH = 50
 TUBE_VELOCITY = 3
@@ -22,6 +23,14 @@ tube3_x = 400
 tube1_height = randint(100,400)
 tube2_height = randint(100,400)
 tube3_height = randint(100,400)
+
+BIRD_X = 50
+bird_y = 400
+BIRD_WIDTH = 35
+BIRD_HEIGHT = 35
+
+drop_velocity = 0
+GRAVITY = 0.5
 
 clock = pygame.time.Clock()
 
@@ -41,6 +50,8 @@ while running:
     pygame.draw.rect(screen, BLUE, (tube2_x,tube2_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube2_height-TUBE_GAP))
     pygame.draw.rect(screen, BLUE, (tube3_x,tube3_height+TUBE_GAP,TUBE_WIDTH,HEIGHT-tube3_height-TUBE_GAP))
     
+    pygame.draw.rect(screen, RED, (BIRD_X,bird_y,BIRD_WIDTH,BIRD_HEIGHT))
+    
     if tube1_x < - TUBE_WIDTH:
         tube1_x = 550
         tube1_height = randint(100,400)
@@ -51,11 +62,16 @@ while running:
         tube3_x = 550
         tube3_height = randint(100,400)    
     
-    
+    bird_y += drop_velocity
+    drop_velocity += GRAVITY
+        
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                drop_velocity = 0
+                drop_velocity -= 10
     pygame.display.flip()   
 
 pygame.quit()            
