@@ -18,11 +18,11 @@ YELLOW = (200,200,0)
 # Tham so cua ong
 TUBE_WIDTH = 50
 TUBE_VELOCITY = 3
-TUBE_GAP = 150
+TUBE_GAP = 170
 
-tube1_x = 400
-tube2_x = 600
-tube3_x = 800
+tube1_x = 500
+tube2_x = 750
+tube3_x = 1000
 
 tube1_height = randint(100,400)
 tube2_height = randint(100,400)
@@ -37,6 +37,10 @@ BIRD_HEIGHT = 35
 drop_velocity = 0
 GRAVITY = 0.5
 
+# Hinh chim
+bird_image = pygame.image.load("redbird.png")
+bird_image = pygame.transform.scale(bird_image, (BIRD_WIDTH,BIRD_HEIGHT))
+
 # Tham so tinh diem
 score = 0
 font = pygame.font.SysFont('sans',20)
@@ -47,18 +51,23 @@ tube3_pass = False
 
 pausing = False
 
+# Hinh nen
+background_image = pygame.image.load("background.png")
+background_image = pygame.transform.scale(background_image, (WIDTH,HEIGHT))
+
 # Khoi tao dong ho
 clock = pygame.time.Clock()
 
 while running:
     clock.tick(60)
     screen.fill(GREEN)
+    screen.blit(background_image, (0,0))
     
     # Ve ong
     tube1_rect = pygame.draw.rect(screen, BLUE, (tube1_x,0,TUBE_WIDTH,tube1_height))
     tube2_rect = pygame.draw.rect(screen, BLUE, (tube2_x,0,TUBE_WIDTH,tube2_height))
     tube3_rect = pygame.draw.rect(screen, BLUE, (tube3_x,0,TUBE_WIDTH,tube3_height))
-    
+        
     # Di chuyen ong sang trai
     tube1_x = tube1_x - TUBE_VELOCITY
     tube2_x = tube2_x - TUBE_VELOCITY
@@ -74,22 +83,22 @@ while running:
     screen.blit(score_txt,(5,5))
     
     # Ve chim
-    bird_rect = pygame.draw.rect(screen, RED, (BIRD_X,bird_y,BIRD_WIDTH,BIRD_HEIGHT))
-    
+    # bird_rect = pygame.draw.rect(screen, RED, (BIRD_X,bird_y,BIRD_WIDTH,BIRD_HEIGHT))
+    bird_rect = screen.blit(bird_image,(BIRD_X,bird_y))
     # Ve cat
     sand_rect = pygame.draw.rect(screen, YELLOW, (0,580,400,20))
     
     # Tao ong moi
     if tube1_x < -TUBE_WIDTH:
-        tube1_x = 550
+        tube1_x = 650
         tube1_height = randint(100,400)
         tube1_pass = False
     if tube2_x < -TUBE_WIDTH:
-        tube2_x = 550
+        tube2_x = 650
         tube2_height = randint(100,400)
         tube2_pass = False
     if tube3_x < -TUBE_WIDTH:
-        tube3_x = 550
+        tube3_x = 650
         tube3_height = randint(100,400)  
         tube3_pass = False  
     
